@@ -27,7 +27,7 @@ const sprites = createPlayerSprites();
 const pathY = Math.floor((VIRTUAL_HEIGHT - PATH_HEIGHT) / 2);
 const groundY = pathY + PATH_HEIGHT - 2;
 
-const imageModules = import.meta.glob("./assets/images/*.{png,jpg,jpeg,webp,gif}", {
+const imageModules = import.meta.glob("./assets/images/*.{png,jpg,jpeg,JPG,JPEG,webp,gif}", {
   eager: true,
   import: "default",
 });
@@ -41,34 +41,25 @@ for (const [path, url] of Object.entries(imageModules)) {
 }
 
 type SignConfig = {
-  date: string;
   images: string[] | { prefix: string };
-  text: string;
 };
 
 const SIGN_CONFIGS: SignConfig[] = [
-  { date: "9/14/2025", images: ["hack"], text: "" },
-  { date: "9/19/2025", images: ["sept19"], text: "" },
-  { date: "9/20/2025", images: ["pktroof"], text: "" },
-  { date: "9/21/2025", images: ["commonsdate"], text: "" },
-  { date: "9/25/2025", images: ["tecca"], text: "" },
-  { date: "10/5", images: ["garba"], text: "" },
-  { date: "10/14", images: ["facetime_ld"], text: "" },
-  { date: "10/26", images: ["official", "best_gift_ever"], text: "" },
-  { date: "11/1", images: ["goofy", "goofy2"], text: "" },
-  { date: "11/6", images: ["naughty_selfie", "cuddling"], text: "" },
-  { date: "11/9", images: ["snowport_kiss", "silly_date_night"], text: "" },
-  { date: "11/16", images: ["bench_ily_silly", "bench_ily"], text: "" },
-  { date: "12/4", images: ["ice_skating"], text: "" },
-  { date: "12/8", images: ["pkt_semi1", "pkt_semi2"], text: "" },
-  { date: "12/11", images: ["caught_selfie1", "caught_selfie2", "our_eyes_only"], text: "" },
-  { date: "12/13", images: ["stud4"], text: "" },
-  { date: "12/19", images: { prefix: "3month" }, text: "" },
-  {
-    date: "12/22",
-    images: ["ldr_12_22", "ld_selfie_12_29", "cruise", "smoky_mtns", "ld_facetime_collage"],
-    text: "",
-  },
+  { images: ["0"] },
+  { images: ["1"] },
+  { images: ["6"] },
+  { images: ["7"] },
+  { images: ["8"] },
+  { images: ["9"] },
+  { images: ["10"] },
+  { images: ["11"] },
+  { images: ["12"] },
+  { images: ["12.5"] },
+  { images: ["13"] },
+  { images: ["15"] },
+  { images: ["19"] },
+  { images: ["20"] },
+  { images: ["21"] },
 ];
 
 function getImageUrl(key: string) {
@@ -90,25 +81,10 @@ const SIGNS = SIGN_CONFIGS.map((sign) => {
   const images = Array.isArray(sign.images)
     ? sign.images.map((key) => getImageUrl(key)).filter(Boolean)
     : getImagesByPrefix(sign.images.prefix);
-  return {
-    date: sign.date,
-    text: sign.text,
-    images,
-  };
+  return { images };
 });
 
-function toSignLabel(date: string) {
-  if (date.includes("-") && !date.includes("/")) {
-    return date;
-  }
-  const parts = date.split("/");
-  if (parts.length >= 2) {
-    return `${parts[0]}/${parts[1]}`;
-  }
-  return date;
-}
-
-const SIGN_LABELS = SIGN_CONFIGS.map((sign) => toSignLabel(sign.date));
+const SIGN_LABELS = SIGN_CONFIGS.map(() => "");
 
 function buildSignPositions(count: number, start: number, end: number) {
   if (count <= 1) return [start];
@@ -130,8 +106,6 @@ const SIGN_INTERACTION_DISTANCE = 30;
 
 const popup = document.getElementById("sign-popup");
 const popupImage = document.getElementById("popup-image") as HTMLImageElement | null;
-const popupDate = document.getElementById("popup-date");
-const popupText = document.getElementById("popup-text");
 const popupPrev = document.getElementById("popup-prev");
 const popupNext = document.getElementById("popup-next");
 const titleScreen = document.getElementById("title-screen");
@@ -177,12 +151,6 @@ function updatePopupContent() {
 
   if (popupImage) {
     popupImage.src = sign.images[activeImageIndex] ?? "";
-  }
-  if (popupDate) {
-    popupDate.textContent = sign.date;
-  }
-  if (popupText) {
-    popupText.textContent = sign.text;
   }
 
   const showNav = sign.images.length > 1;

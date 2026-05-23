@@ -71,7 +71,7 @@ export function render(ctx: CanvasRenderingContext2D, state: RenderState) {
   ctx.fillRect(0, pathY + pathHeight - 2, worldWidth, 2);
 
   drawSigns(ctx, pathY, signPositions, signLabels);
-  drawFlowers(ctx, pathY, worldWidth, cameraX);
+  drawPathDecorations(ctx, pathY, cameraX);
   drawGroundHeart(ctx, heartX, pathY + Math.floor(pathHeight / 2) - 5);
 
   if (followerX !== null) {
@@ -202,124 +202,112 @@ function drawSigns(ctx: CanvasRenderingContext2D, pathY: number, signPositions: 
   }
 }
 
-function drawFlowers(
+function drawPathDecorations(
   ctx: CanvasRenderingContext2D,
   pathY: number,
-  worldWidth: number,
   cameraX: number
 ) {
-  const flowerPositions: Array<{ x: number; side: "top" | "bottom"; isRose: boolean }> = [
-    { x: 80, side: "top", isRose: false },
-    { x: 150, side: "bottom", isRose: false },
-    { x: 280, side: "top", isRose: false },
-    { x: 350, side: "bottom", isRose: false },
-    { x: 480, side: "top", isRose: false },
-    { x: 550, side: "bottom", isRose: false },
-    { x: 680, side: "top", isRose: false },
-    { x: 750, side: "bottom", isRose: false },
-    { x: 880, side: "top", isRose: false },
-    { x: 950, side: "bottom", isRose: false },
-    { x: 1080, side: "top", isRose: false },
-    { x: 1150, side: "bottom", isRose: false },
-    { x: 1200, side: "top", isRose: false },
-    { x: 1280, side: "top", isRose: false },
-    { x: 1320, side: "bottom", isRose: false },
-    { x: 1350, side: "bottom", isRose: false },
-    { x: 1400, side: "top", isRose: false },
-    { x: 1450, side: "bottom", isRose: false },
-    { x: 1480, side: "top", isRose: false },
-    { x: 1520, side: "bottom", isRose: false },
-    { x: 1550, side: "top", isRose: false },
-    { x: 1580, side: "bottom", isRose: false },
-    { x: 1620, side: "top", isRose: false },
-    { x: 1650, side: "bottom", isRose: false },
-    { x: 1680, side: "top", isRose: false },
-    { x: 1720, side: "bottom", isRose: false },
-    { x: 1740, side: "top", isRose: false },
-    { x: 1760, side: "bottom", isRose: false },
-    { x: 1780, side: "top", isRose: false },
-    { x: 1800, side: "bottom", isRose: true },
-    { x: 1820, side: "top", isRose: true },
-    { x: 1840, side: "bottom", isRose: true },
-    { x: 1860, side: "top", isRose: true },
-    { x: 1880, side: "bottom", isRose: true },
-    { x: 1900, side: "top", isRose: true },
-    { x: 1920, side: "bottom", isRose: true },
-    { x: 1940, side: "top", isRose: true },
-    { x: 1960, side: "bottom", isRose: true },
-    { x: 1980, side: "top", isRose: true },
+  const decorations: Array<{ x: number; side: "top" | "bottom"; kind: "robot" | "umiami" | "stethoscope" }> = [
+    { x: 120, side: "top", kind: "robot" },
+    { x: 260, side: "bottom", kind: "umiami" },
+    { x: 400, side: "top", kind: "stethoscope" },
+    { x: 540, side: "bottom", kind: "robot" },
+    { x: 680, side: "top", kind: "umiami" },
+    { x: 820, side: "bottom", kind: "stethoscope" },
+    { x: 960, side: "top", kind: "robot" },
+    { x: 1100, side: "bottom", kind: "umiami" },
+    { x: 1240, side: "top", kind: "stethoscope" },
+    { x: 1380, side: "bottom", kind: "robot" },
+    { x: 1520, side: "top", kind: "umiami" },
+    { x: 1660, side: "bottom", kind: "stethoscope" },
+    { x: 1780, side: "top", kind: "robot" },
+    { x: 1880, side: "bottom", kind: "umiami" },
+    { x: 1950, side: "top", kind: "stethoscope" },
   ];
 
-  for (const flower of flowerPositions) {
-    const y = flower.side === "top" ? pathY - 4 : pathY + 36;
-    if (flower.x > cameraX - 20 && flower.x < cameraX + 340) {
-      if (flower.isRose) {
-        drawRose(ctx, flower.x, y);
-      } else {
-        drawFlower(ctx, flower.x, y);
-      }
+  for (const deco of decorations) {
+    if (deco.x < cameraX - 24 || deco.x > cameraX + 344) continue;
+    const y = deco.side === "top" ? pathY - 6 : pathY + 34;
+    if (deco.kind === "robot") {
+      drawRobot(ctx, deco.x, y);
+    } else if (deco.kind === "umiami") {
+      drawUMiamiU(ctx, deco.x, y);
+    } else {
+      drawStethoscope(ctx, deco.x, y);
     }
   }
 }
 
-function drawFlower(ctx: CanvasRenderingContext2D, x: number, y: number) {
-  const colors = ["#ff69b4", "#ff1493", "#ffb6c1", "#ffc0cb", "#ff69b4"];
-  const color = colors[Math.floor(x / 50) % colors.length];
-  const stem = "#228b22";
+function drawRobot(ctx: CanvasRenderingContext2D, x: number, y: number) {
+  const metal = "#9aa3ad";
+  const metalDark = "#6b737c";
+  const eye = "#ff4444";
+  const accent = "#4a90d9";
 
-  ctx.fillStyle = stem;
-  ctx.fillRect(x, y, 1, 4);
+  ctx.fillStyle = metalDark;
+  ctx.fillRect(x, y - 4, 1, 3);
+  ctx.fillStyle = accent;
+  ctx.fillRect(x, y - 5, 1, 1);
 
-  ctx.fillStyle = color;
-  ctx.fillRect(x - 1, y - 2, 3, 3);
+  ctx.fillStyle = metal;
+  ctx.fillRect(x - 3, y - 3, 7, 5);
+  ctx.fillStyle = metalDark;
+  ctx.fillRect(x - 2, y - 2, 5, 3);
+  ctx.fillStyle = eye;
   ctx.fillRect(x - 2, y - 1, 1, 1);
-  ctx.fillRect(x + 2, y - 1, 1, 1);
-  ctx.fillRect(x - 1, y - 3, 1, 1);
-  ctx.fillRect(x - 1, y + 1, 1, 1);
-  ctx.fillRect(x - 2, y - 2, 1, 1);
-  ctx.fillRect(x + 2, y - 2, 1, 1);
-  ctx.fillRect(x - 2, y, 1, 1);
-  ctx.fillRect(x + 2, y, 1, 1);
+  ctx.fillRect(x + 1, y - 1, 1, 1);
 
-  ctx.fillStyle = "#ffd700";
-  ctx.fillRect(x, y - 1, 1, 1);
+  ctx.fillStyle = metal;
+  ctx.fillRect(x - 4, y + 2, 9, 6);
+  ctx.fillStyle = accent;
+  ctx.fillRect(x - 1, y + 4, 3, 2);
+
+  ctx.fillStyle = metalDark;
+  ctx.fillRect(x - 6, y + 3, 2, 4);
+  ctx.fillRect(x + 4, y + 3, 2, 4);
+
+  ctx.fillStyle = metal;
+  ctx.fillRect(x - 3, y + 8, 3, 3);
+  ctx.fillRect(x + 1, y + 8, 3, 3);
 }
 
-function drawRose(ctx: CanvasRenderingContext2D, x: number, y: number) {
-  const colors = ["#dc143c", "#c71585", "#ff1493", "#ff69b4", "#dc143c"];
-  const color = colors[Math.floor(x / 50) % colors.length];
-  const darkColor = "#8b0000";
-  const stem = "#228b22";
+function drawUMiamiU(ctx: CanvasRenderingContext2D, x: number, y: number) {
+  const green = "#005030";
+  const orange = "#f47321";
 
-  ctx.fillStyle = stem;
-  ctx.fillRect(x, y, 1, 4);
+  ctx.fillStyle = green;
+  ctx.fillRect(x - 3, y - 4, 1, 6);
+  ctx.fillRect(x + 2, y - 4, 1, 6);
+  ctx.fillRect(x - 3, y + 1, 6, 1);
 
-  ctx.fillStyle = darkColor;
-  ctx.fillRect(x - 2, y - 4, 1, 1);
-  ctx.fillRect(x + 2, y - 4, 1, 1);
-  ctx.fillRect(x - 3, y - 3, 1, 1);
-  ctx.fillRect(x + 3, y - 3, 1, 1);
-  ctx.fillRect(x - 2, y - 1, 1, 1);
-  ctx.fillRect(x + 2, y - 1, 1, 1);
+  ctx.fillStyle = orange;
+  ctx.fillRect(x - 2, y - 3, 1, 4);
+  ctx.fillRect(x + 1, y - 3, 1, 4);
+  ctx.fillRect(x - 2, y, 4, 1);
+}
 
-  ctx.fillStyle = color;
-  ctx.fillRect(x - 1, y - 2, 3, 3);
-  ctx.fillRect(x - 1, y - 4, 1, 1);
-  ctx.fillRect(x, y - 4, 1, 1);
-  ctx.fillRect(x + 1, y - 4, 1, 1);
-  ctx.fillRect(x - 2, y - 3, 1, 1);
-  ctx.fillRect(x - 2, y - 2, 1, 1);
-  ctx.fillRect(x + 2, y - 3, 1, 1);
-  ctx.fillRect(x + 2, y - 2, 1, 1);
-  ctx.fillRect(x - 1, y, 1, 1);
-  ctx.fillRect(x + 1, y, 1, 1);
+function drawStethoscope(ctx: CanvasRenderingContext2D, x: number, y: number) {
+  const tube = "#2a2a36";
+  const metal = "#b8bcc4";
+  const chest = "#6b737c";
 
-  ctx.fillStyle = darkColor;
-  ctx.fillRect(x, y - 2, 1, 1);
+  ctx.fillStyle = metal;
+  ctx.fillRect(x - 4, y - 1, 2, 1);
+  ctx.fillRect(x + 2, y - 1, 2, 1);
+
+  ctx.fillStyle = tube;
+  ctx.fillRect(x - 3, y, 1, 2);
+  ctx.fillRect(x + 2, y, 1, 2);
+  ctx.fillRect(x - 2, y + 2, 5, 1);
+
+  ctx.fillStyle = chest;
+  ctx.fillRect(x - 1, y + 3, 3, 2);
+  ctx.fillStyle = metal;
+  ctx.fillRect(x, y + 4, 1, 1);
 }
 
 function drawGroundHeart(ctx: CanvasRenderingContext2D, x: number, y: number) {
-  ctx.fillStyle = "#e84a7a";
+  ctx.fillStyle = "#3b82f6";
   ctx.fillRect(x + 1, y + 0, 2, 2);
   ctx.fillRect(x + 6, y + 0, 2, 2);
   ctx.fillRect(x + 0, y + 1, 3, 2);
@@ -332,7 +320,7 @@ function drawGroundHeart(ctx: CanvasRenderingContext2D, x: number, y: number) {
 
 function drawCoupleHeart(ctx: CanvasRenderingContext2D, x: number, y: number) {
   ctx.save();
-  ctx.fillStyle = "#ff69b4";
+  ctx.fillStyle = "#3b82f6";
   ctx.fillRect(x - 6, y - 2, 5, 5);
   ctx.fillRect(x + 1, y - 2, 5, 5);
   ctx.fillRect(x - 5, y + 2, 9, 5);
@@ -344,24 +332,28 @@ function drawFollower(ctx: CanvasRenderingContext2D, x: number, groundY: number)
   const drawX = Math.floor(x - 8);
   const drawY = Math.floor(groundY - 16);
   const skin = "#d4a574";
-  const dress = "#e91e63";
+  const shirt = "#e53935";
+  const pants = "#2a2a36";
   const hair = "#1a1a1a";
 
   ctx.fillStyle = hair;
   ctx.fillRect(drawX + 5, drawY + 0, 6, 2);
-  ctx.fillRect(drawX + 4, drawY + 2, 1, 6);
-  ctx.fillRect(drawX + 11, drawY + 2, 1, 6);
+  ctx.fillRect(drawX + 4, drawY + 2, 1, 2);
+  ctx.fillRect(drawX + 11, drawY + 2, 1, 2);
 
   ctx.fillStyle = skin;
   ctx.fillRect(drawX + 5, drawY + 2, 6, 4);
 
-  ctx.fillStyle = dress;
-  ctx.fillRect(drawX + 5, drawY + 7, 6, 6);
-  ctx.fillRect(drawX + 4, drawY + 13, 8, 1);
+  ctx.fillStyle = shirt;
+  ctx.fillRect(drawX + 4, drawY + 7, 8, 5);
+
+  ctx.fillStyle = pants;
+  ctx.fillRect(drawX + 5, drawY + 12, 2, 2);
+  ctx.fillRect(drawX + 9, drawY + 12, 2, 2);
 
   ctx.fillStyle = skin;
-  ctx.fillRect(drawX + 6, drawY + 13, 1, 1);
-  ctx.fillRect(drawX + 9, drawY + 13, 1, 1);
+  ctx.fillRect(drawX + 5, drawY + 14, 2, 1);
+  ctx.fillRect(drawX + 9, drawY + 14, 2, 1);
 }
 
 function drawPlayer(
