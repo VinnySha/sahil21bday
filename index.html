@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sahil's 21st Birthday</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="game" width="320" height="180"></canvas>
+      <div id="title-screen" class="title-screen active">
+        <div class="title-card">
+          <h1>Sahil's 21st Birthday 🎂</h1>
+          <p>- Use A/D or Left/Right keys to move</p>
+          <p>- Walk by signs to see what they say</p>
+          <p>- Click the arrows on signs to see more pictures</p>
+          <p>- Hold Shift to sprint</p>
+          <button id="start-button" class="start-button" aria-label="Start">
+            🎂
+          </button>
+        </div>
+      </div>
+      <button id="heart-button" class="heart-button hidden" aria-label="Start heart scene">
+        🎂
+      </button>
+      <div id="sign-popup" class="sign-popup hidden">
+        <div class="popup-content">
+          <div class="popup-image-row">
+            <button id="popup-prev" class="popup-nav" aria-label="Previous photo">&lt;</button>
+            <img id="popup-image" class="popup-image" alt="Sign memory" />
+            <button id="popup-next" class="popup-nav" aria-label="Next photo">&gt;</button>
+          </div>
+          <div id="popup-date" class="popup-date"></div>
+          <p id="popup-text" class="popup-text"></p>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
